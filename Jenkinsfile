@@ -1,20 +1,17 @@
 pipeline {
     agent {
-        dockerfile {
-            filename 'Dockerfile'
+        docker {
+            image 'public.ecr.aws/sam/build-python3.12:latest'
         }
     }
 
     stages {
-        stage('Source') {
+        stage('Verify Docker Agent') {
             steps {
-                echo 'Source code checked out from GitHub'
-            }
-        }
-
-        stage('Install Dependencies') {
-            steps {
-                sh 'pip install -r requirements.txt'
+                sh 'python --version'
+                sh 'pytest --version'
+                sh 'sam --version'
+                sh 'pwd'
             }
         }
 
