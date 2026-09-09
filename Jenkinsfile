@@ -24,13 +24,13 @@ pipeline {
 
         stage('SAM Validate') {
             steps {
-                bat 'docker run --rm -v "%CD%:/workspace" -w /workspace calculator-ci sam validate --template-file template.yaml'
+                bat 'docker run --rm -v "%CD%:/workspace" -w /workspace calculator-ci sam validate --template-file template.yaml --region ap-south-1'
             }
         }
 
         stage('SAM Build') {
             steps {
-                bat 'docker run --rm -v "%CD%:/workspace" -w /workspace calculator-ci sam build'
+                bat 'docker run --rm -v "%CD%:/workspace" -w /workspace calculator-ci sam build --region ap-south-1'
             }
         }
     }
