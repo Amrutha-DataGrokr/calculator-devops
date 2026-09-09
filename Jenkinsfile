@@ -1,35 +1,36 @@
 pipeline {
-    agent {
-        docker {
-            image 'public.ecr.aws/sam/build-python3.12:latest'
-        }
-    }
+    agent any
 
     stages {
-        stage('Verify Docker Agent') {
+
+        stage('Source') {
             steps {
-                sh 'python --version'
-                sh 'pytest --version'
-                sh 'sam --version'
-                sh 'pwd'
+                echo 'Source code checked out from GitHub'
             }
         }
 
-        stage('Unit Tests') {
+        stage('Build Docker CI Environment') {
             steps {
-                sh 'python -m pytest'
+                bat 'docker build -t calculator-ci .'
+            }
+        }
+
+        stage('Install Dependencies and Unit Tests') {
+            steps {
+                bat 'docker run --rm -v "%CD%:/workspace" -w /workspace calculator-ci pip install -r requirements.txt'
+                bat 'docker run --rm -v "%CD%:/workspace" -w /workspace calculator-ci python -m pytest'
             }
         }
 
         stage('SAM Validate') {
             steps {
-                sh 'sam validate --template-file template.yaml'
+                bat 'docker run --rm -v "%CD%:/workspace" -w /workspace calculator-ci sam validate --template-file template.yaml'
             }
         }
 
         stage('SAM Build') {
             steps {
-                sh 'sam build'
+                bat 'docker run --rm -v "%CD%:/workspace" -w /workspace calculator-ci sam build'
             }
         }
     }
