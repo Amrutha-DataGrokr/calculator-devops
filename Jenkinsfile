@@ -5,12 +5,14 @@ pipeline {
             reuseNode true
         }
     }
+
     stages {
         stage('Source') {
             steps {
                 echo 'Source code checked out from GitHub'
             }
         }
+
         stage('Install Dependencies') {
             steps {
                 sh 'pip install -r requirements.txt'
